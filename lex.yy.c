@@ -371,7 +371,7 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[14] =
     {   0,
-        0,    0,    7,    5,    1,    6,    3,    4,    0,    3,
+        0,    0,    7,    5,    1,    1,    3,    4,    0,    3,
         4,    2,    0
     } ;
 
@@ -727,6 +727,7 @@ do_action:	/* This label is used only to access EOF actions. */
 			goto yy_find_action;
 
 case 1:
+/* rule 1 can match eol */
 YY_RULE_SETUP
 #line 11 "projeto.lex"
 ;
@@ -760,7 +761,7 @@ YY_RULE_SETUP
 #line 20 "projeto.lex"
 ECHO;
 	YY_BREAK
-#line 764 "lex.yy.c"
+#line 765 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

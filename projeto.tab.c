@@ -1563,11 +1563,21 @@ yyreturn:
 
 
 int main(int, char**) {
+
+	// open a file handle to a particular file:
+	FILE *myfile = fopen("a.projeto.file", "r");
+	// make sure it is valid:
+	if (!myfile) {
+		cout << "I can't open a.projeto.file!" << endl;
+		return -1;
+	}
+	// set flex to read from it instead of defaulting to STDIN:
+	yyin = myfile;
 	
 	// parse through the input until there is no more:
-
+	do {
 		yyparse();
-	
+	} while (!feof(yyin));
 	
 }
 
