@@ -43,7 +43,10 @@
      FLOAT = 259,
      STRING = 260,
      NEWLINE = 261,
-     MY_LS = 262
+     MY_LS = 262,
+     MY_QUIT = 263,
+     MY_PS = 264,
+     MY_IFCONFIG = 265
    };
 #endif
 /* Tokens.  */
@@ -52,20 +55,24 @@
 #define STRING 260
 #define NEWLINE 261
 #define MY_LS 262
+#define MY_QUIT 263
+#define MY_PS 264
+#define MY_IFCONFIG 265
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 16 "projeto.y"
+#line 17 "projeto.y"
 {
 	int ival;
 	float fval;
+	char cval;
 	char *sval;
 }
 /* Line 1529 of yacc.c.  */
-#line 69 "projeto.tab.h"
+#line 76 "projeto.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

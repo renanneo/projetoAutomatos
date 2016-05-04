@@ -3,26 +3,29 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
 
-// stuff from flex that bison needs to know about:
 extern int yylex();
 extern int yyparse();
 extern FILE *yyin;
  
 void yyerror(const char *s);
 void printProjectPath();
+
 %}
 
 %union {
 	int ival;
 	float fval;
+	char cval;
 	char *sval;
 }
 
 %token <ival> INT
 %token <fval> FLOAT
 %token <sval> STRING
-%token NEWLINE MY_LS
+%token NEWLINE
+%token MY_LS MY_QUIT MY_PS MY_IFCONFIG
 
 %start inicio
 
@@ -31,22 +34,24 @@ void printProjectPath();
 %%
 
 inicio:
-		| inicio linhaNova
-		;
-
-comando:
-	MY_LS comando { system("/bin/ls"); }
+	| inicio linhaNova
+;
 
 linhaNova: NEWLINE {printProjectPath();}
     | comando NEWLINE {printProjectPath();}
+;
+
+comando: MY_LS { system("/bin/ls"); }
+	| MY_QUIT {exit(0);}
+	| MY_PS {system("/bin/ps");}
+	| MY_IFCONFIG {system("ifconfig");}
 ;
 
 %%
 
 int main() {
 	yyin = stdin;
-	
-	// parse through the input until there is no more:
+
 	do {
 		yyparse();
 	} while (!feof(yyin));
