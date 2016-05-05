@@ -11,6 +11,7 @@ extern FILE *yyin;
  
 void yyerror(const char *s);
 void printProjectPath();
+void printErro();
 
 %}
 
@@ -25,7 +26,7 @@ void printProjectPath();
 %token <fval> FLOAT
 %token <sval> STRING
 %token NEWLINE
-%token MY_LS MY_QUIT MY_PS MY_IFCONFIG
+%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH
 
 %start inicio
 
@@ -33,18 +34,21 @@ void printProjectPath();
 
 %%
 
-inicio:
-	| inicio linhaNova
-;
-
-linhaNova: NEWLINE {printProjectPath();}
+inicio: NEWLINE {printProjectPath();}
     | comando NEWLINE {printProjectPath();}
+    | MY_ERROR {printErro();}
+	| inicio inicio
 ;
 
 comando: MY_LS { system("/bin/ls"); }
-	| MY_QUIT {exit(0);}
+	| MY_QUIT {printf("RenanShell finalizado!\n"); exit(0);}
 	| MY_PS {system("/bin/ps");}
 	| MY_IFCONFIG {system("ifconfig");}
+	| MY_TOUCH STRING { 	char stringfinal[1000] = "/usr/bin/touch ";
+							strcat(stringfinal, $2);
+							system(stringfinal);
+							printf("Arquivo %s criado! \n", $2);
+						}      
 ;
 
 %%
@@ -59,7 +63,13 @@ int main() {
 }
 
 void yyerror(const char* s) {
-	fprintf(stderr, "Erro: %s\n", s);
+	//fprintf(stderr, "Erro: %s\n", s);
+	printErro();
+}
+
+void printErro() {
+	printf("Comando desconhecido \n");
+
 }
 
 void printProjectPath(){
