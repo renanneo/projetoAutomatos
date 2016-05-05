@@ -26,7 +26,7 @@ void printErro();
 %token <fval> FLOAT
 %token <sval> STRING
 %token NEWLINE
-%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH
+%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR
 
 %start inicio
 
@@ -40,14 +40,19 @@ inicio: NEWLINE {printProjectPath();}
 	| inicio inicio
 ;
 
-comando: MY_LS { system("/bin/ls"); }
+comando: MY_LS { system("ls"); }
 	| MY_QUIT {printf("RenanShell finalizado!\n"); exit(0);}
-	| MY_PS {system("/bin/ps");}
+	| MY_PS {system("ps");}
 	| MY_IFCONFIG {system("ifconfig");}
-	| MY_TOUCH STRING { 	char stringfinal[1000] = "/usr/bin/touch ";
+	| MY_TOUCH STRING { 	char stringfinal[1000] = "touch ";
 							strcat(stringfinal, $2);
 							system(stringfinal);
 							printf("Arquivo %s criado! \n", $2);
+						}
+	| MY_MKDIR STRING {		char stringfinal[1000] = "mkdir ";
+							strcat(stringfinal, $2);
+							system(stringfinal);
+							printf("Pasta %s criada! \n", $2);
 						}      
 ;
 
@@ -71,6 +76,8 @@ void printErro() {
 	printf("Comando desconhecido \n");
 
 }
+
+void executeCommandWithParameter()
 
 void printProjectPath(){
 	char projectName[4096] = "RenanShell:";

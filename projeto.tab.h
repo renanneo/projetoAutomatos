@@ -48,7 +48,8 @@
      MY_PS = 264,
      MY_IFCONFIG = 265,
      MY_ERROR = 266,
-     MY_TOUCH = 267
+     MY_TOUCH = 267,
+     MY_MKDIR = 268
    };
 #endif
 /* Tokens.  */
@@ -62,6 +63,7 @@
 #define MY_IFCONFIG 265
 #define MY_ERROR 266
 #define MY_TOUCH 267
+#define MY_MKDIR 268
 
 
 
@@ -76,7 +78,7 @@ typedef union YYSTYPE
 	char *sval;
 }
 /* Line 1529 of yacc.c.  */
-#line 80 "projeto.tab.h"
+#line 82 "projeto.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

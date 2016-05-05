@@ -13,6 +13,7 @@
 "ps" 			{return MY_PS;}
 "touch" 		{return MY_TOUCH;}
 "ifconfig" 		{return MY_IFCONFIG;}
+"mkdir" 		{return MY_MKDIR;}
 \n 				{return NEWLINE;}
 [0-9]+          {yylval.ival = atoi(yytext); return INT;}
 [0-9]+\.[0-9]+	{yylval.fval = atof(yytext); return FLOAT;}
