@@ -12,6 +12,8 @@ extern FILE *yyin;
 void yyerror(const char *s);
 void printProjectPath();
 void printErro();
+void executeCommandWithStringParameter(char* c, char* p);
+void executeCommandWithIntParameter(char*c, int p);
 
 %}
 
@@ -26,7 +28,7 @@ void printErro();
 %token <fval> FLOAT
 %token <sval> STRING
 %token NEWLINE
-%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR
+%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR MY_RMDIR MY_START MY_KILL
 
 %start inicio
 
@@ -44,16 +46,31 @@ comando: MY_LS { system("ls"); }
 	| MY_QUIT {printf("RenanShell finalizado!\n"); exit(0);}
 	| MY_PS {system("ps");}
 	| MY_IFCONFIG {system("ifconfig");}
-	| MY_TOUCH STRING { 	char stringfinal[1000] = "touch ";
-							strcat(stringfinal, $2);
-							system(stringfinal);
+	| MY_TOUCH STRING 	{ 	
+							executeCommandWithStringParameter("touch ", $2);
 							printf("Arquivo %s criado! \n", $2);
 						}
-	| MY_MKDIR STRING {		char stringfinal[1000] = "mkdir ";
-							strcat(stringfinal, $2);
-							system(stringfinal);
+						
+	| MY_MKDIR STRING 	{	
+							executeCommandWithStringParameter("mkdir ", $2);
 							printf("Pasta %s criada! \n", $2);
-						}      
+						}
+
+	| MY_RMDIR STRING 	{		
+							executeCommandWithStringParameter("rmdir ", $2);
+							printf("Pasta %s deletada! \n", $2);
+						}
+
+	| MY_START STRING 	{		
+							executeCommandWithStringParameter("open -a ", $2);
+							printf("Programa %s iniciado! \n", $2);
+						}
+
+	| MY_KILL INT 		{		
+							executeCommandWithIntParameter("kill %d", $2);
+							printf("Programa %d finalizado! \n", $2);
+						}
+
 ;
 
 %%
@@ -74,10 +91,23 @@ void yyerror(const char* s) {
 
 void printErro() {
 	printf("Comando desconhecido \n");
-
 }
 
-void executeCommandWithParameter()
+void executeCommandWithStringParameter(char* c, char* p) {
+	char command[100];
+	strcpy(command,c);
+	strcat(command,p);
+	system(command);
+}
+
+void executeCommandWithIntParameter(char* c, int p) {
+	char tempCommand[100];
+	strcpy(tempCommand,c);
+	char command[100];
+   	sprintf(command, c, p);
+   	puts(command);
+   	system(command);
+}
 
 void printProjectPath(){
 	char projectName[4096] = "RenanShell:";

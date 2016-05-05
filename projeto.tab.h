@@ -49,7 +49,10 @@
      MY_IFCONFIG = 265,
      MY_ERROR = 266,
      MY_TOUCH = 267,
-     MY_MKDIR = 268
+     MY_MKDIR = 268,
+     MY_RMDIR = 269,
+     MY_START = 270,
+     MY_KILL = 271
    };
 #endif
 /* Tokens.  */
@@ -64,13 +67,16 @@
 #define MY_ERROR 266
 #define MY_TOUCH 267
 #define MY_MKDIR 268
+#define MY_RMDIR 269
+#define MY_START 270
+#define MY_KILL 271
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 18 "projeto.y"
+#line 20 "projeto.y"
 {
 	int ival;
 	float fval;
@@ -78,7 +84,7 @@ typedef union YYSTYPE
 	char *sval;
 }
 /* Line 1529 of yacc.c.  */
-#line 82 "projeto.tab.h"
+#line 88 "projeto.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
