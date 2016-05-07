@@ -30,6 +30,8 @@ void executeCommandWithIntParameter(char*c, int p);
 %token NEWLINE
 %token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR MY_RMDIR MY_START MY_KILL MY_CLEAR MY_SLASH MY_PLUS MY_MINUS MY_STAR MY_PARENTHESIS_LEFT MY_PARENTHESIS_RIGHT
 
+%left MY_PLUS MY_MINUS
+%left MY_STAR MY_SLASH
 
 
 %start inicio
@@ -100,8 +102,7 @@ expressao: INT { $$ = $1; }
  
 	| expressao MY_SLASH expressao	{ $$ = $1 / $3; }
 
-	| MY_PARENTHESIS_LEFT expressao MY_PARENTHESIS_RIGHT { $$ = $2 }
-	| MY_PLUS {printf("SINAL +");}
+	| MY_PARENTHESIS_LEFT expressao MY_PARENTHESIS_RIGHT { $$ = $2 }	
 ;
 
 %%
