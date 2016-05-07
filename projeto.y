@@ -30,14 +30,14 @@ void executeCommandWithIntParameter(char*c, int p);
 %token NEWLINE
 %token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR MY_RMDIR MY_START MY_KILL MY_CLEAR MY_SLASH MY_PLUS MY_MINUS MY_STAR MY_PARENTHESIS_LEFT MY_PARENTHESIS_RIGHT
 
-%left MY_PLUS MY_MINUS
-%left MY_STAR MY_SLASH
-
+%left MY_MINUS MY_PLUS
+%left MY_SLASH MY_STAR
 
 %start inicio
 
 %type <sval> comando
 %type <ival> expressao
+%type <fval> expressao_float
 
 %%
 
@@ -47,6 +47,10 @@ inicio: NEWLINE {printProjectPath();}
     						printf("resultado %d \n",$1);
     						printProjectPath();
     					}
+    | expressao_float NEWLINE 	{
+    								printf("resultado %f \n",$1);
+    								printProjectPath();
+   							  	}
     | MY_ERROR {printErro();}
     | inicio inicio
 ;
@@ -94,7 +98,7 @@ comando: MY_LS { system("ls"); }
 ;
 
 expressao: INT { $$ = $1; } 
-	| expressao MY_PLUS expressao	{ $$ = $1 + $3; }
+	| expressao MY_PLUS expressao 	{ $$ = $1 + $3; }
 
 	| expressao MY_MINUS expressao	{ $$ = $1 - $3; }
 
@@ -103,6 +107,23 @@ expressao: INT { $$ = $1; }
 	| expressao MY_SLASH expressao	{ $$ = $1 / $3; }
 
 	| MY_PARENTHESIS_LEFT expressao MY_PARENTHESIS_RIGHT { $$ = $2 }	
+;
+
+expressao_float: float 	{ $$ = $1; }
+	  | expressao_float MY_PLUS expressao_float 	{ $$ = $1 + $3; }
+	  | expressao_float MY_MINUS expressao_float 	{ $$ = $1 - $3; }
+	  | expressao_float MY_STAR expressao_float 	{ $$ = $1 * $3; }
+	  | expressao_float MY_SLASH expressao_float 	{ $$ = $1 / $3; }
+	  | MY_PARENTHESIS_LEFT expressao_float MY_PARENTHESIS_RIGHT 	{ $$ = $2; }
+	  | expressao MY_PLUS expressao_float 	{ $$ = $1 + $3; }
+	  | expressao MY_MINUS expressao_float 	{ $$ = $1 - $3; }
+	  | expressao MY_STAR expressao_float  	{ $$ = $1 * $3; }
+	  | expressao MY_SLASH expressao_float 	{ $$ = $1 / $3; }
+	  | expressao_float MY_PLUS expressao 	{ $$ = $1 + $3; }
+	  | expressao_float MY_MINUS expressao 	{ $$ = $1 - $3; }
+	  | expressao_float MY_STAR expressao 	{ $$ = $1 * $3; }
+	  | expressao_float MY_SLASH expressao 	{ $$ = $1 / $3; }
+	  | expressao MY_SLASH expressao 		{ $$ = $1 / (float)$3; }
 ;
 
 %%
