@@ -19,6 +19,7 @@
 "ls" 			{return MY_LS;}
 "quit" 			{return MY_QUIT;}
 "ps" 			{return MY_PS;}
+"rm"			{return MY_RM;}
 "touch" 		{return MY_TOUCH;}
 "ifconfig" 		{return MY_IFCONFIG;}
 "mkdir" 		{return MY_MKDIR;}
