@@ -28,24 +28,38 @@ void executeCommandWithIntParameter(char*c, int p);
 %token <fval> FLOAT
 %token <sval> STRING
 %token NEWLINE
-%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR MY_RMDIR MY_START MY_KILL
+%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR MY_RMDIR MY_START MY_KILL MY_CLEAR MY_SLASH MY_PLUS MY_MINUS MY_STAR MY_PARENTHESIS_LEFT MY_PARENTHESIS_RIGHT
+
+
 
 %start inicio
 
 %type <sval> comando
+%type <ival> expressao
 
 %%
 
 inicio: NEWLINE {printProjectPath();}
     | comando NEWLINE {printProjectPath();}
+    | expressao NEWLINE {
+    						printf("resultado %d \n",$1);
+    						printProjectPath();
+    					}
     | MY_ERROR {printErro();}
-	| inicio inicio
+    | inicio inicio
 ;
 
 comando: MY_LS { system("ls"); }
-	| MY_QUIT {printf("RenanShell finalizado!\n"); exit(0);}
-	| MY_PS {system("ps");}
-	| MY_IFCONFIG {system("ifconfig");}
+
+	| MY_PS { system("ps"); }
+
+	| MY_IFCONFIG { system("ifconfig"); }
+
+	| MY_QUIT 			{
+							printf("RenanShell finalizado!\n"); 
+							exit(0);
+						}
+
 	| MY_TOUCH STRING 	{ 	
 							executeCommandWithStringParameter("touch ", $2);
 							printf("Arquivo %s criado! \n", $2);
@@ -71,11 +85,29 @@ comando: MY_LS { system("ls"); }
 							printf("Programa %d finalizado! \n", $2);
 						}
 
+	| MY_CLEAR 			{
+							system("clear");
+						}
+
+;
+
+expressao: INT { $$ = $1; } 
+	| expressao MY_PLUS expressao	{ $$ = $1 + $3; }
+
+	| expressao MY_MINUS expressao	{ $$ = $1 - $3; }
+
+	| expressao MY_STAR expressao	{ $$ = $1 * $3; }
+ 
+	| expressao MY_SLASH expressao	{ $$ = $1 / $3; }
+
+	| MY_PARENTHESIS_LEFT expressao MY_PARENTHESIS_RIGHT { $$ = $2 }
+	| MY_PLUS {printf("SINAL +");}
 ;
 
 %%
 
 int main() {
+	printProjectPath();
 	yyin = stdin;
 
 	do {
