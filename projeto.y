@@ -28,10 +28,11 @@ void executeCommandWithIntParameter(char*c, int p);
 %token <fval> FLOAT
 %token <sval> STRING
 %token NEWLINE
-%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR MY_RMDIR MY_START MY_KILL MY_CLEAR MY_SLASH MY_PLUS MY_MINUS MY_STAR MY_PARENTHESIS_LEFT MY_PARENTHESIS_RIGHT
+%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR MY_RMDIR MY_START MY_KILL MY_CLEAR MY_SLASH MY_PLUS MY_MINUS MY_STAR MY_PARENTHESIS_LEFT MY_PARENTHESIS_RIGHT MY_RM
 
+//usado para priorizar divisao e multiplicação 
 %left MY_MINUS MY_PLUS
-%left MY_SLASH MY_STAR
+%left MY_SLASH MY_STAR 
 
 %start inicio
 
@@ -51,7 +52,7 @@ inicio: NEWLINE {printProjectPath();}
     								printf("resultado %f \n",$1);
     								printProjectPath();
    							  	}
-    | MY_ERROR {printErro();}
+    | MY_ERROR { printErro(); }
     | inicio inicio
 ;
 
@@ -68,31 +69,37 @@ comando: MY_LS { system("ls"); }
 
 	| MY_TOUCH STRING 	{ 	
 							executeCommandWithStringParameter("touch ", $2);
-							printf("Arquivo %s criado! \n", $2);
 						}
 						
 	| MY_MKDIR STRING 	{	
-							executeCommandWithStringParameter("mkdir ", $2);
-							printf("Pasta %s criada! \n", $2);
+							//executeCommandWithStringParameter("mkdir ", $2);
+							
+							if (mkdir($2) == 0) {
+								printf("Pasta %s criada! \n", $2);
+							} else {
+								printf("Erro ao criar pasta\n");
+							}
 						}
 
 	| MY_RMDIR STRING 	{		
 							executeCommandWithStringParameter("rmdir ", $2);
-							printf("Pasta %s deletada! \n", $2);
 						}
 
 	| MY_START STRING 	{		
 							executeCommandWithStringParameter("open -a ", $2);
-							printf("Programa %s iniciado! \n", $2);
 						}
 
 	| MY_KILL INT 		{		
 							executeCommandWithIntParameter("kill %d", $2);
-							printf("Programa %d finalizado! \n", $2);
 						}
 
 	| MY_CLEAR 			{
 							system("clear");
+						}
+
+	| MY_RM STRING		{
+							executeCommandWithStringParameter("rm ", $2);
+							printf("Arquivo %s excluido \n", $2);
 						}
 
 ;
@@ -109,20 +116,33 @@ expressao: INT { $$ = $1; }
 	| MY_PARENTHESIS_LEFT expressao MY_PARENTHESIS_RIGHT { $$ = $2 }	
 ;
 
-expressao_float: float 	{ $$ = $1; }
+expressao_float: FLOAT 	{ $$ = $1; }
 	  | expressao_float MY_PLUS expressao_float 	{ $$ = $1 + $3; }
+
 	  | expressao_float MY_MINUS expressao_float 	{ $$ = $1 - $3; }
+
 	  | expressao_float MY_STAR expressao_float 	{ $$ = $1 * $3; }
+
 	  | expressao_float MY_SLASH expressao_float 	{ $$ = $1 / $3; }
+
 	  | MY_PARENTHESIS_LEFT expressao_float MY_PARENTHESIS_RIGHT 	{ $$ = $2; }
+
 	  | expressao MY_PLUS expressao_float 	{ $$ = $1 + $3; }
+
 	  | expressao MY_MINUS expressao_float 	{ $$ = $1 - $3; }
+
 	  | expressao MY_STAR expressao_float  	{ $$ = $1 * $3; }
+
 	  | expressao MY_SLASH expressao_float 	{ $$ = $1 / $3; }
+
 	  | expressao_float MY_PLUS expressao 	{ $$ = $1 + $3; }
+
 	  | expressao_float MY_MINUS expressao 	{ $$ = $1 - $3; }
+
 	  | expressao_float MY_STAR expressao 	{ $$ = $1 * $3; }
+
 	  | expressao_float MY_SLASH expressao 	{ $$ = $1 / $3; }
+
 	  | expressao MY_SLASH expressao 		{ $$ = $1 / (float)$3; }
 ;
 
