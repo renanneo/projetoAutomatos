@@ -28,7 +28,7 @@ void executeCommandWithIntParameter(char*c, int p);
 %token <fval> FLOAT
 %token <sval> STRING
 %token NEWLINE
-%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR MY_RMDIR MY_START MY_KILL MY_CLEAR MY_SLASH MY_PLUS MY_MINUS MY_STAR MY_PARENTHESIS_LEFT MY_PARENTHESIS_RIGHT MY_RM
+%token MY_LS MY_QUIT MY_PS MY_IFCONFIG MY_ERROR MY_TOUCH MY_MKDIR MY_RMDIR MY_START MY_KILL MY_CLEAR MY_SLASH MY_PLUS MY_MINUS MY_STAR MY_PARENTHESIS_LEFT MY_PARENTHESIS_RIGHT MY_RM MY_CD
 
 //usado para priorizar divisao e multiplicação 
 %left MY_MINUS MY_PLUS
@@ -95,6 +95,14 @@ comando: MY_LS { system("ls"); }
 
 	| MY_CLEAR 			{
 							system("clear");
+						}
+
+	| MY_CD				{
+							chdir(getenv("HOME"));
+						}
+
+	| MY_CD	STRING		{
+							chdir($2);
 						}
 
 	| MY_RM STRING		{
