@@ -98,6 +98,10 @@ comando: MY_LS { system("ls"); }
 						}
 
 	| MY_START STRING 	{		
+							#ifdef __linux
+								system($2);
+							#endif
+
 							executeCommandWithStringParameter("open -a ", $2);
 						}
 
