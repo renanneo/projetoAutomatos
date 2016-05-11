@@ -33,16 +33,24 @@ void executeCommandWithIntParameter(char*c, int p);
 //usado para priorizar divisao e multiplicação 
 %left MY_MINUS MY_PLUS
 %left MY_SLASH MY_STAR 
+%left NEG
 
 %start inicio
 
 %type <sval> comando
 %type <ival> expressao
+%type <sval> linha 
 %type <fval> expressao_float
 
 %%
 
-inicio: NEWLINE {printProjectPath();}
+inicio: 
+
+	| inicio linha
+
+;
+
+linha: NEWLINE {printProjectPath();}
     | comando NEWLINE {printProjectPath();}
     | expressao NEWLINE {
     						printf("resultado %d \n",$1);
@@ -53,7 +61,6 @@ inicio: NEWLINE {printProjectPath();}
     								printProjectPath();
    							  	}
     | MY_ERROR { printErro(); }
-    | inicio inicio
 ;
 
 comando: MY_LS { system("ls"); }
@@ -77,12 +84,17 @@ comando: MY_LS { system("ls"); }
 							if (mkdir($2) == 0) {
 								printf("Pasta %s criada! \n", $2);
 							} else {
-								printf("Erro ao criar pasta\n");
+								printf("Erro ao criar pasta, verifique se já existe uma pasta com esse nome \n");
 							}
 						}
 
 	| MY_RMDIR STRING 	{		
-							executeCommandWithStringParameter("rmdir ", $2);
+							if (rmdir($2) == 0) {
+								printf("Pasta %s removida! \n",$2);
+							} else {
+								printf("Erro ao remover pasta, verifique se a pasta existe \n");
+							}
+							//executeCommandWithStringParameter("rmdir ", $2);
 						}
 
 	| MY_START STRING 	{		
@@ -102,7 +114,9 @@ comando: MY_LS { system("ls"); }
 						}
 
 	| MY_CD	STRING		{
-							chdir($2);
+							if (chdir($2) == -1){
+								printf("Verifique se o diretório existe\n");
+							}
 						}
 
 	| MY_RM STRING		{
@@ -113,45 +127,47 @@ comando: MY_LS { system("ls"); }
 ;
 
 expressao: INT { $$ = $1; } 
+	| MY_MINUS expressao %prec NEG {$$ = -$2}
+
 	| expressao MY_PLUS expressao 	{ $$ = $1 + $3; }
 
 	| expressao MY_MINUS expressao	{ $$ = $1 - $3; }
 
 	| expressao MY_STAR expressao	{ $$ = $1 * $3; }
- 
-	| expressao MY_SLASH expressao	{ $$ = $1 / $3; }
 
 	| MY_PARENTHESIS_LEFT expressao MY_PARENTHESIS_RIGHT { $$ = $2 }	
 ;
 
 expressao_float: FLOAT 	{ $$ = $1; }
-	  | expressao_float MY_PLUS expressao_float 	{ $$ = $1 + $3; }
+	| MY_MINUS expressao_float %prec NEG {$$ = -$2}
 
-	  | expressao_float MY_MINUS expressao_float 	{ $$ = $1 - $3; }
+	| expressao_float MY_PLUS expressao_float 	{ $$ = $1 + $3; }
 
-	  | expressao_float MY_STAR expressao_float 	{ $$ = $1 * $3; }
+	| expressao_float MY_MINUS expressao_float 	{ $$ = $1 - $3; }
 
-	  | expressao_float MY_SLASH expressao_float 	{ $$ = $1 / $3; }
+	| expressao_float MY_STAR expressao_float 	{ $$ = $1 * $3; }
 
-	  | MY_PARENTHESIS_LEFT expressao_float MY_PARENTHESIS_RIGHT 	{ $$ = $2; }
+	| expressao_float MY_SLASH expressao_float 	{ $$ = $1 / $3; }
 
-	  | expressao MY_PLUS expressao_float 	{ $$ = $1 + $3; }
+	| MY_PARENTHESIS_LEFT expressao_float MY_PARENTHESIS_RIGHT 	{ $$ = $2; }
 
-	  | expressao MY_MINUS expressao_float 	{ $$ = $1 - $3; }
+	| expressao MY_PLUS expressao_float 	{ $$ = $1 + $3; }
 
-	  | expressao MY_STAR expressao_float  	{ $$ = $1 * $3; }
+	| expressao MY_MINUS expressao_float 	{ $$ = $1 - $3; }
 
-	  | expressao MY_SLASH expressao_float 	{ $$ = $1 / $3; }
+	| expressao MY_STAR expressao_float  	{ $$ = $1 * $3; }
 
-	  | expressao_float MY_PLUS expressao 	{ $$ = $1 + $3; }
+	| expressao MY_SLASH expressao_float 	{ $$ = $1 / $3; }
 
-	  | expressao_float MY_MINUS expressao 	{ $$ = $1 - $3; }
+	| expressao_float MY_PLUS expressao 	{ $$ = $1 + $3; }
 
-	  | expressao_float MY_STAR expressao 	{ $$ = $1 * $3; }
+	| expressao_float MY_MINUS expressao 	{ $$ = $1 - $3; }
 
-	  | expressao_float MY_SLASH expressao 	{ $$ = $1 / $3; }
+	| expressao_float MY_STAR expressao 	{ $$ = $1 * $3; }
 
-	  | expressao MY_SLASH expressao 		{ $$ = $1 / (float)$3; }
+	| expressao_float MY_SLASH expressao 	{ $$ = $1 / $3; }
+
+	| expressao MY_SLASH expressao 		{ $$ = $1 / (float)$3; }
 ;
 
 %%

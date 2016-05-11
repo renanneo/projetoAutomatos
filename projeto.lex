@@ -7,9 +7,9 @@
 %option noyywrap
 
 %%
-[ \t]       	 ;
-[\+\-]?[0-9]+          {yylval.ival = atoi(yytext); return INT;}
-[\+\-]?[0-9]+\.[0-9]+	{yylval.fval = atof(yytext); return FLOAT;}
+[ \t]+       	{;}
+[0-9]+          {yylval.ival = atoi(yytext); return INT;}
+[0-9]+\.[0-9]+	{yylval.fval = atof(yytext); return FLOAT;}
 "+" 			{return MY_PLUS;}
 "-" 			{return MY_MINUS;}
 "*" 			{return MY_STAR;}
